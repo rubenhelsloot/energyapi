@@ -51,13 +51,16 @@ public class EnergyMeterService {
         energyMeterRepository.deleteById(id);
     }
 
-    // Methode voor inputvalidatie (XSS-filter)
+    // Methode voor inputvalidatie
     private String sanitizeLocation(String input) {
-        if (input == null) {
-            return null;
+        if (input == null || input.trim().isEmpty()) {
+            throw new IllegalArgumentException("Location cannot be empty");
         }
-        //input = input.replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;");
-       
+
+        if (!input.matches("[a-zA-Z0-9]*")) {
+            throw new IllegalArgumentException("Location must contain only letters and numbers");
+        }
+
         return input;
     }
 
