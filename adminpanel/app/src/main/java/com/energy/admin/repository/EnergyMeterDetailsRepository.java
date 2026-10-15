@@ -14,7 +14,10 @@ public class EnergyMeterDetailsRepository {
     private EntityManager entityManager;
 
     public List<EnergyMeter> findByMeterDetails(String searchQuery) {
-        String query = "SELECT * FROM energy_meters WHERE id = '" + searchQuery + "'";
-        return entityManager.createNativeQuery(query, EnergyMeter.class).getResultList();
+        String query = "SELECT * FROM energy_meters WHERE id = :meterId";
+        return entityManager
+                .createNativeQuery(query, EnergyMeter.class)
+                .setParameter("meterId", searchQuery)
+                .getResultList();
     }
 }
