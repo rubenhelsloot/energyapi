@@ -73,13 +73,10 @@ async def search_users(name: str = Query(None), current_user: dict = Depends(get
 
 # NoSQL Injection vulnerability
 @app.post("/login/")
-async def login(name: str = Body(...), password: Any = Body(...)):
+async def login(name: str = Body(...), password: str = Body(...)):
     if not name or not password:
         raise HTTPException(status_code=400, detail="Name and password must be provided")
-    if isinstance(password, str):
-        user = await user_collection.find_one({"name": {"$regex": name}, "password": password})
-    else:
-        user = await user_collection.find_one({"name": {"$regex": name}, "password": password})
+    user = await user_collection.find_one({"name": name, "password": password})
     if user:
         token = create_access_token({
             "sub": user["name"], 
@@ -91,10 +88,10 @@ async def login(name: str = Body(...), password: Any = Body(...)):
 
 # NoSQL Injection vulnerability
 @app.get("/login/")
-async def login(name: str = Query(None), password: Any = Query(None)):
+async def login(name: str = Query(None), password: str = Query(None)):
     if not name or not password:
         raise HTTPException(status_code=400, detail="Name and password must be provided")
-    user = await user_collection.find_one({"name": {"$regex": name}, "password": password})
+    user = await user_collection.find_one({"name": name, "password": password})
     if user:
         token = create_access_token({
             "sub": user["name"], 
